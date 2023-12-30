@@ -5,11 +5,11 @@ import numpy as np
 from _0_general_ML.data_utils.dataset import Dataset
 from _0_general_ML.model_utils.model import Keras_Model
 
-from .attack import Attack
+from .adaptive_attack import Adaptive_Attack
 
 
 
-class PGD_Attack(Attack):
+class Physical_PGD_Attack(Adaptive_Attack):
     
     def __init__(
         self, 
@@ -29,12 +29,13 @@ class PGD_Attack(Attack):
     
     def attack(
         self, x_input, y_input,
-        epsilon=0.1, norm='li', 
-        epsilon_per_iteration=0.03,
+        num_devices=15000,
         iterations=1000,
         targeted=False, 
         **kwargs
     ):
+        
+        epsilon = num_devices/1000
         
         self.last_run_loss_values = []
         epsilon_per_iteration = epsilon/(iterations/4)
@@ -47,11 +48,22 @@ class PGD_Attack(Attack):
                 targeted=targeted
             )
             
-            x_perturbation = np.clip(x_perturbation, -epsilon, epsilon)
+            # Only positive perturbations
+            x_perturbation = np.clip(x_perturbation, 0, 1)
+            
+            # L1-Norm
+            current_l1_norm = np.expand_dims(
+                np.sum(np.abs(x_perturbation), axis=(1,2,3)), 
+                axis=(1,2,3)
+            )
+            if np.max(current_l1_norm) > epsilon:
+                indices = np.where( current_l1_norm > epsilon )
+                x_perturbation[indices] *= epsilon / current_l1_norm[indices]
+            
             x_perturbation = np.clip(x_input+x_perturbation, 0, 1) - x_input
+            
+            x_perturbation = self.universalize_perturbation(x_perturbation)
             
         return np.clip(x_input + x_perturbation, 0, 1)
     
     
-    def fgsm_step(self, x_input, y_input, x_perturbation, epsilon=0.03, targeted=False):
-        return super().fgsm_step(x_input, y_input, x_perturbation, epsilon, targeted)

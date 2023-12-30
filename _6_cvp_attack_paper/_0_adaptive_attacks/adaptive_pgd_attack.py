@@ -46,20 +46,8 @@ class Adaptive_PGD_Attack(Adaptive_Attack):
                 epsilon=epsilon_per_iteration,
                 targeted=targeted
             )
+            
             x_perturbation = np.clip(x_perturbation, -epsilon, epsilon)
-            
-            if norm == 'l1':
-                current_l1_norm = np.expand_dims(
-                    np.mean(np.abs(x_perturbation), axis=(1,2,3)), 
-                    axis=(1,2,3)
-                )
-                if np.max(current_l1_norm) > epsilon:
-                    indices = np.where( current_l1_norm > epsilon )
-                    x_perturbation[indices] *= epsilon / current_l1_norm[indices]
-            
-            elif norm == 'li':
-                x_perturbation = np.clip(x_perturbation, -epsilon, epsilon)
-                    
             x_perturbation = np.clip(x_input+x_perturbation, 0, 1) - x_input
             
             x_perturbation = self.universalize_perturbation(x_perturbation)
