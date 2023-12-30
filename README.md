@@ -6,7 +6,10 @@ This paper studies the robustness of the crowd flow prediction (CFP) models. We 
 
 We are still cleaning this code, and hope to complete it soon. Nevertheless, we have provided essential modules for interested users.
 
-To cite our paper, use the following:
+
+## Citation
+If you use this code in your work, please cite using the following BibTeX entry:
+```
 @ARTICLE{10375906,
   author={Ali, Hassan and Butt, Muhammad Atif and Filali, Fethi and Al-Fuqaha, Ala and Qadir, Junaid},
   journal={IEEE Transactions on Intelligent Transportation Systems}, 
@@ -15,4 +18,6 @@ To cite our paper, use the following:
   volume={},
   number={},
   pages={1-16},
-  doi={10.1109/TITS.2023.3343971}}
+  doi={10.1109/TITS.2023.3343971}
+}
+```
