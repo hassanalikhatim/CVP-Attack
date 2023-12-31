@@ -11,7 +11,7 @@ def mlp_baseline(
 ):
     
     default_model_configuration = {
-        'parameters': [5, 1, 0],
+        'hidden_layers': 1,
         'weight_decay': None,
         'learning_rate': 1e-4
     }
@@ -23,7 +23,7 @@ def mlp_baseline(
     model = tf.keras.models.Sequential()
     model.add(tf.keras.layers.Flatten(input_shape=in_sample.shape[1:]))
     
-    for k in range(default_model_configuration['parameters'][0]):
+    for k in range(default_model_configuration['hidden_layers']):
         model.add(
             tf.keras.layers.Dense(
                 512, activation='relu', 

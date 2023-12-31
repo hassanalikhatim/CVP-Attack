@@ -39,8 +39,14 @@ def st_resnet_model_function(
     )(inter0)
     
     if multiple_input:
-        inter1 = tf.keras.layers.Conv2D(10, (7,7), padding='same', activation='relu', kernel_regularizer=regularizer)(inter1)
-        inter2 = tf.keras.layers.Conv2D(10, (7,7), padding='same', activation='relu', kernel_regularizer=regularizer)(inter2)
+        inter1 = tf.keras.layers.Conv2D(
+            10, (7,7), padding='same', activation='relu', 
+            kernel_regularizer=regularizer
+        )(inter1)
+        inter2 = tf.keras.layers.Conv2D(
+            10, (7,7), padding='same', activation='relu', 
+            kernel_regularizer=regularizer
+        )(inter2)
     
         inter0 = Fusion(kernel_regularizer=regularizer)([inter0, inter1, inter2])
     
@@ -53,7 +59,7 @@ def st_resnet_baseline(
 ):
     
     default_model_configuration = {
-        'parameters': [12, 1, 0],
+        'hidden_layers': [1],
         'weight_decay': None,
         'learning_rate': 1e-4
     }
@@ -65,7 +71,7 @@ def st_resnet_baseline(
     model_in = tf.keras.layers.Input(shape=in_samples.shape[1:])
     
     model_out = st_resnet_model_function(
-        model_in, repeats=default_model_configuration['parameters'][0], 
+        model_in, repeats=default_model_configuration['hidden_layers'], 
         regularizer=default_model_configuration['weight_decay'], 
         multiple_input=data.data_configuration['multiple_input']
     )

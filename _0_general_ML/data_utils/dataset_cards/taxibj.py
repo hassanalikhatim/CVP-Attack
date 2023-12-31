@@ -3,7 +3,7 @@ import numpy as np
 
 from ..dataset import Dataset
 
-from utils_.general_utils import confirm_directory
+from utils_.general_utils import confirm_directory, neighbour_image_pixels
 
 
 
@@ -163,5 +163,19 @@ class TaxiBJ(Dataset):
         base_x, base_y = base_x[shuffled_indices], base_y[shuffled_indices]
         
         return base_x, base_y
+    
+    
+    def _prepare_convolutional_adjacency_matrix(self):
+        
+        (h, w) = self.x[0,0,:,:,0].shape
+        
+        self.adjacency_matrix = np.zeros((h*w, h*w)).astype('float32')
+        for k in np.arange(h*w):
+            neighbours = neighbour_image_pixels(k, h, w, num_neighbour=self.num_neighbour)
+            self.adjacency_matrix[k, neighbours] = 1.
+        
+        self.adjacency_matrix_type = '('+str(self.num_neighbour)+')'
+        
+        return
     
     
