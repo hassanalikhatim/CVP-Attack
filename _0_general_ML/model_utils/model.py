@@ -20,6 +20,7 @@ model_architectures = {
 
 
 class Keras_Model:
+    
     def __init__(
         self, 
         data: Dataset, model_configuration,

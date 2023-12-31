@@ -25,9 +25,9 @@ def main_sub(
     # model name
     model_name = 'model'
     for key in data_configuration.keys():
-        model_name += '_{}({})'.format(key, data_configuration[key])
+        model_name += '_({}-{})'.format(key, data_configuration[key])
     for key in model_configuration.keys():
-        model_name += '_{}({})'.format(key, model_configuration[key])
+        model_name += '_({}-{})'.format(key, model_configuration[key])
     
     my_model = Keras_Model(
         my_data, model_configuration,
