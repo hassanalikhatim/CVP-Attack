@@ -1,7 +1,7 @@
 # dataset configurations
 taxibj_configuration = {
     'year': 16,
-    'history_lengths': [3],
+    'history_length': [3],
     'multiple_input': False,
     'multiple_output': True
 }
@@ -10,22 +10,22 @@ taxibj_configuration = {
 # model configurations
 st_resnet_config = {
     'model_architecture': 'st_resnet', 
-    'model_depths': [1, 2, 3],
+    'hidden_layers': [1], # 2, 3],
     'weight_decay': None,
     'learning_rate': 1e-4
 }
 mlp_config = {
     'model_architecture': 'mlp', 
-    'model_depths': [3, 5, 10],
+    'hidden_layers': [3], # 5, 10],
     'weight_decay': None,
     'learning_rate': 1e-4
 }
 tgcn_config = {
     'model_architecture': 'tgcn', 
-    'model_depths': [1],
+    'hidden_layers': 1,
     'weight_decay': None,
-    'message_dimensions': [1, 3, 5, 10],
-    'num_neighbours': [1, 3, 5, 10],
+    'message_dimensions': [1], # 3, 5, 10],
+    'adjacent_nodes': [1], # 3, 5, 10],
     'learning_rate': 1e-4
 }
 
@@ -66,15 +66,15 @@ attack_configurations = {
 
 # changeable configurations
 # general
-path = 'all_results/test_results/'
+path = '__all_results__/test_results/'
 
 # dataset
 dataset_folder = '../../_Datasets/'
 
 # model
-model_architectures = ['mlp']
+model_architectures = ['mlp', 'st_resnet', 'tgcn']
 batch_size = 64
-epochs = 500
+epochs = 10
 
 # attack
 attack_names = ['fgsm']

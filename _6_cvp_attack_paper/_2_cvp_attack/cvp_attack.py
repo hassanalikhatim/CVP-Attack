@@ -4,9 +4,10 @@ import time
 
 
 from _0_general_ML.data_utils.dataset_cards.taxibj import TaxiBJ
-from _0_general_ML.model_utils.model import Keras_Model
 
-from _1_adversarial_attacks.attack import Attack
+from _1_adversarial_ML.attack import Attack
+
+from _6_cvp_attack_paper._0_cav_detect.keras_model_with_call import Keras_Model_with_call
 
 
 
@@ -14,9 +15,11 @@ class CVP_Attack(Attack):
     
     def __init__(
         self, 
-        data: TaxiBJ, model: Keras_Model, 
+        data: TaxiBJ, model: Keras_Model_with_call, 
         input_mask=None, output_mask=None
     ):
+        
+        self.model = model
         
         super().__init__(
             data, model, 
@@ -52,10 +55,10 @@ class CVP_Attack(Attack):
             x_perturbation_o = tf.reduce_sum(x_perturbation_o, axis=0)
             
             x_perturbation_inflow.append(
-                tf.reshape(x_perturbation[:1], self.data.x_test()[:1,:1,:,:,:1].shape)
+                tf.reshape(x_perturbation[:1], self.data.x_test[:1,:1,:,:,:1].shape)
             )
             x_perturbation_outflow.append(
-                tf.reshape(x_perturbation_o, self.data.x_test()[:1,:1,:,:,:1].shape)
+                tf.reshape(x_perturbation_o, self.data.x_test[:1,:1,:,:,:1].shape)
             )
             
         x_perturbation = x_perturbation_inflow * self.history_length
@@ -87,7 +90,9 @@ class CVP_Attack(Attack):
                 loss_value = self.adv_loss_outputs(y_in, prediction)
             
             self.last_run_loss_values += [tf.reduce_mean(loss_value).numpy()]
-            loss_value += 1e15*self.model.cav_index
+            
+            if self.model.defended:
+                loss_value += 1e15*self.model.cav_index
             
             grads = tape.gradient(loss_value, x_perturbation_i)
         

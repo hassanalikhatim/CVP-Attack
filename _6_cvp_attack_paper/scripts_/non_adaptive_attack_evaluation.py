@@ -1,8 +1,14 @@
+import numpy as np
+
+
 from _6_cvp_attack_paper.scripts_.configuration_values import *
 
 from _0_general_ML.data_utils.dataset_cards.taxibj import TaxiBJ
 
+from _1_adversarial_ML.all_attacks import FGSM_Attack, i_FGSM_Attack, PGD_Attack
+
 from _6_cvp_attack_paper._0_cav_detect.keras_model_with_call import Keras_Model_with_call
+from _6_cvp_attack_paper._2_cvp_attack.cvp_attack import CVP_Attack
 
 
 
@@ -32,8 +38,32 @@ def main_sub(
     print('Model name will be:', model_name)
         
     my_model.load_or_train(
-        model_name, epochs=epochs, batch_size=batch_size,
-        patience=15
+        model_name, epochs=epochs, 
+        batch_size=batch_size
+    )
+    
+    # attack code starts here...
+    target = np.ones_like( my_data.y_test[-100:] )
+    
+    my_attack = PGD_Attack(my_data, my_model)
+    
+    adversarial_examples = my_attack.attack(
+        my_data.x_test[-100:], target, 
+        epsilon=0.1, iterations=20,
+        targeted=True
+    )
+    
+    # evaluating the attack
+    original_loss = my_model.model.evaluate(
+        my_data.x_test[-100:], my_data.y_test[-100:], verbose=False
+    )
+    adversarial_loss = my_model.model.evaluate(
+        adversarial_examples, my_data.y_test[-100:], verbose=False
+    )
+    print(
+        'Model loss before attack: {:7.3f}\n'
+        'Model loss after attack:  {:7.3f}'
+        ''.format(original_loss, adversarial_loss)
     )
     
     return

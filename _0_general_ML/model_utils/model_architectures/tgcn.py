@@ -42,7 +42,7 @@ def TGCN_baseline(
             Gated_Graph_Layer(
                 message_dimension=default_model_configuration['message_dimensions'], 
                 adjacency_matrix=adjacency_matrix, 
-                time_steps=data.data_configuration['history']
+                time_steps=data.data_configuration['history_length']
             )
         )
     model.add(tf.keras.layers.Flatten())

@@ -2,17 +2,15 @@ import numpy as np
 import tensorflow as tf
 
 
-from _0_general_ML.data_utils.dataset import Dataset
-
-from _0_general_ML.model_utils.model import Keras_Model
+from _0_general_ML.data_utils.dataset_cards.taxibj import TaxiBJ
 
 
 
-class CaV_Detector:
+class CaV_Detect:
     
     def __init__(
         self, 
-        data: Dataset, model: Keras_Model, 
+        data: TaxiBJ, model: tf.keras.Model,
         y_target=None, 
         n=2
     ):
@@ -22,15 +20,19 @@ class CaV_Detector:
         
         self.n = n
         
+        self.defended = True
+        
         return
     
     
     def consistency_check_on_batch(self, x_input):
         
-        indices_current = np.arange(self.data.history-1)
+        history_length = self.data.data_configuration['history_length']
+        
+        indices_current = np.arange(history_length-1)
         indices_current = np.append(
             indices_current, 
-            np.arange(self.data.history, self.data.history*2-1),
+            np.arange(history_length, history_length*2-1),
             axis=0
         )
         indices_previous = indices_current + 1
@@ -70,7 +72,7 @@ class CaV_Detector:
     def validity_check_on_batch(self, x_input):
         
         filter_size = ( 2 * self.n ) + 1
-        filter_in = np.ones((filter_size, filter_size, 1, 1))
+        filter_in = np.ones((filter_size, filter_size, 1, 1)).astype(np.float32)
         filter_in[int(filter_size/2), int(filter_size/2)] = 0
         filter_out = filter_in - 1
         filter_0 = tf.constant(np.append(filter_in, filter_out, axis=2).astype(np.float32))
@@ -96,7 +98,7 @@ class CaV_Detector:
         self.cav_index = self.validity_check_on_batch(1000*x_input)
         self.cav_index += self.consistency_check_on_batch(1000*x_input)
 
-        return self.model.model(x_input)
+        return self.model(x_input)
     
     
     def validity_detector(self, x_input):

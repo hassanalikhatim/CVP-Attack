@@ -6,7 +6,7 @@ from _0_general_ML.data_utils.dataset import Dataset
 
 from _0_general_ML.model_utils.model import Keras_Model
 
-from _1_adversarial_attacks.attack import Attack
+from _1_adversarial_ML.attack import Attack
 
 
 

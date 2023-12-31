@@ -2,8 +2,6 @@ import tensorflow as tf
 import numpy as np
 
 
-from _0_general_ML.model_utils.model import Keras_Model
-
 from _0_general_ML.data_utils.dataset import Dataset
 
 
@@ -15,7 +13,7 @@ class Attack:
     
     def __init__(
         self, 
-        data: Dataset, model: Keras_Model,
+        data: Dataset, model: tf.keras.Model,
         input_mask=None, 
         output_mask=None
     ):
@@ -23,11 +21,11 @@ class Attack:
         self.data = data
         self.model = model
         
-        self.input_mask = np.ones_like(data.x_train()[:1])
+        self.input_mask = np.ones_like(data.x_train[:1])
         if input_mask:
             self.input_mask = input_mask
         
-        self.output_mask = np.ones_like(data.y_train()[:1])
+        self.output_mask = np.ones_like(data.y_train[:1])
         if output_mask:
             self.output_mask = output_mask
             
@@ -56,7 +54,6 @@ class Attack:
             else:
                 loss_value = self.adv_loss_outputs(y_in, prediction)
             self.last_run_loss_values += [tf.reduce_mean(loss_value).numpy()]
-            # loss_value += self.model.adaptive*1e15*self.model.cav_index
             
             grads = tape.gradient(loss_value, x_perturbation)
         
@@ -67,12 +64,7 @@ class Attack:
     
     
     def adv_loss_outputs(self, y_true, y_pred):
-        if self.data.num_classes is None:
-            loss = tf.reduce_sum(tf.square(y_true - y_pred)*self.output_mask, axis=0)
-        else:
-            loss = tf.keras.losses.categorical_crossentropy(y_true, y_pred)
-            loss = -tf.reduce_sum(loss*self.output_mask, axis=0)
-        return loss
+        return tf.reduce_sum(tf.square(y_true - y_pred)*self.output_mask, axis=0)
     
     
     def adv_loss_inputs(self, x_delta, loss_type=2):        

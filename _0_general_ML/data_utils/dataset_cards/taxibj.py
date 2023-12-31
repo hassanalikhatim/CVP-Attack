@@ -38,7 +38,6 @@ class TaxiBJ(Dataset):
             'multiple_input': False,
             'multiple_output': True
         }
-        
         for key in data_configuration.keys():
             self.data_configuration[key] = data_configuration[key]
         
@@ -48,7 +47,7 @@ class TaxiBJ(Dataset):
     def prepare_data(self):
         
         data = np.load(
-            self.dataset_folder + 'TaxiBJ{}.npy'.format(self.data_configuration['year'])
+            self.dataset_folder + 'TaxiBJ/TaxiBJ{}.npy'.format(self.data_configuration['year'])
         )
         print("Data shape: ", data.shape, np.max(data), np.min(data))
         
@@ -61,10 +60,15 @@ class TaxiBJ(Dataset):
         
         print(base_x.shape, base_y.shape)
         
-        x_train = base_x[:-int(self.test_split*len(base_x))]
-        y_train = base_y[:-int(self.test_split*len(self.x))]
-        x_test = base_x[-int(self.test_split*len(base_x)):]
-        y_test = base_y[-int(self.test_split*len(base_x)):]
+        x_train = base_x[:-int(self.test_ratio*len(base_x))]
+        y_train = base_y[:-int(self.test_ratio*len(base_x))]
+        x_test = base_x[-int(self.test_ratio*len(base_x)):]
+        y_test = base_y[-int(self.test_ratio*len(base_x)):]
+        
+        x_train = np.clip(x_train/1000, 0, 1).astype(np.float32)
+        y_train = np.clip(y_train/1000, 0, 1).astype(np.float32)
+        x_test = np.clip(x_test/1000, 0, 1).astype(np.float32)
+        y_test = np.clip(y_test/1000, 0, 1).astype(np.float32)
         
         return x_train, y_train, x_test, y_test
     
@@ -142,12 +146,15 @@ class TaxiBJ(Dataset):
         
         except:
             from sklearn.utils import shuffle
-            shuffled_indices = shuffle(np.arange(int(self.test_ratio*len(self.x))))
+            
+            shuffled_indices = shuffle(
+                np.arange( int(self.test_ratio * len(base_x)) )
+            )
             shuffled_indices = np.append(
                 shuffled_indices, 
                 np.arange(
-                    int(self.test_ratio*len(self.x)), 
-                    len(self.x)
+                    int( self.test_ratio*len(base_x) ), 
+                    len(base_x)
                 ), 
                 axis=0
             )
@@ -163,6 +170,10 @@ class TaxiBJ(Dataset):
         base_x, base_y = base_x[shuffled_indices], base_y[shuffled_indices]
         
         return base_x, base_y
+    
+    
+    def info(self):
+        print('Min: {} | Max: {}'.format( np.min(self.x_train), np.max(self.x_train) ))
     
     
     def _prepare_convolutional_adjacency_matrix(self):

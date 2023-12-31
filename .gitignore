@@ -2,3 +2,5 @@ __deprecated__/
 __ignore__/
 __paper__/
 __notebooks__/
+__pycache__/
+__all_results__/
