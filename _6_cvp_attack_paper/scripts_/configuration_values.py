@@ -21,4 +21,6 @@ epochs = config.epochs
 # attack_configurations
 attack_names = config.attack_names
 attack_configurations = config.attack_configurations
+n_targets = config.n_targets
+iterations = config.iterations
 

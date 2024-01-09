@@ -10,7 +10,7 @@ from .cvp_attack import CVP_Attack
 
 
 
-class CVP_Attack(CVP_Attack):
+class Physical_CVP_Attack(CVP_Attack):
     
     def __init__(
         self, 
@@ -22,6 +22,9 @@ class CVP_Attack(CVP_Attack):
             data, model, 
             input_mask, output_mask
         )
+        
+        self.name = 'Physical CVP Attack'
+        self.device_budget = None
         
         return
     
@@ -40,9 +43,9 @@ class CVP_Attack(CVP_Attack):
             {device_budget}: the maximum allowed perturbation to a pixel
         '''
         
+        self.device_budget = device_budget
         epsilon = device_budget/1000
         
-        history = self.data.data_configuration['history_length']
         self.last_run_loss_values = []
         previous_print_time = 0
         epsilon_per_iteration = epsilon/(iterations/4)
@@ -77,9 +80,16 @@ class CVP_Attack(CVP_Attack):
             if np.max(current_l1_norm) > epsilon:
                 indices = np.where( current_l1_norm > epsilon )
                 x_perturbation[indices,0] *= epsilon / current_l1_norm[:,indices]
+        print()
         
         x_perturbation_real = self.compute_inflow_outflow(x_perturbation)
         
         return np.clip(x_input+x_perturbation_real, 0, 1)
+    
+    
+    def info(self):
+        print('\n\n')
+        print('{} | {}'.format(self.name, self.device_budget))
+        return
     
     

@@ -22,20 +22,22 @@ class Physical_PGD_Attack(Adaptive_Attack):
             input_mask, output_mask
         )
         
-        self.last_run_loss_values = []
+        self.name = 'Physical PGD Attack'
+        self.device_budget = None
         
         return
     
     
     def attack(
         self, x_input, y_input,
-        num_devices=15000,
+        device_budget=15000,
         iterations=1000,
         targeted=False, 
         **kwargs
     ):
         
-        epsilon = num_devices/1000
+        self.device_budget = device_budget
+        epsilon = device_budget/1000
         
         self.last_run_loss_values = []
         epsilon_per_iteration = epsilon/(iterations/4)
@@ -65,5 +67,11 @@ class Physical_PGD_Attack(Adaptive_Attack):
             x_perturbation = self.universalize_perturbation(x_perturbation)
             
         return np.clip(x_input + x_perturbation, 0, 1)
+    
+    
+    def info(self):
+        print('\n\n')
+        print('{} | {}'.format(self.name, self.device_budget))
+        return
     
     

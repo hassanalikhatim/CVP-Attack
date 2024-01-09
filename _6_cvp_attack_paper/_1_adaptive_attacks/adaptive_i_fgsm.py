@@ -22,6 +22,8 @@ class Adaptive_i_FGSM_Attack(Adaptive_Attack):
             input_mask, output_mask
         )
         
+        self.name = 'Adaptive i-FGSM Attack'
+        
         return
     
     
@@ -32,6 +34,8 @@ class Adaptive_i_FGSM_Attack(Adaptive_Attack):
         iterations=100, 
         targeted=False, **kwargs
     ):
+        
+        self.epsilon = epsilon
         
         self.last_run_loss_values = []
         epsilon_per_iteration = epsilon/iterations

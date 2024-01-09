@@ -29,6 +29,8 @@ class Attack:
         if output_mask:
             self.output_mask = output_mask
             
+        self.name = None
+        self.epsilon = None
         self.last_run_loss_values = []
         
         return
@@ -75,3 +77,7 @@ class Attack:
         return loss[loss_type]
     
     
+    def info(self):
+        print('\n\n')
+        print('{} | {}'.format(self.name, self.epsilon))
+        return

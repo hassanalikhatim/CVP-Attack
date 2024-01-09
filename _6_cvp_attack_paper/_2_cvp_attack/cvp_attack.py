@@ -26,6 +26,7 @@ class CVP_Attack(Attack):
             input_mask, output_mask
         )
         
+        self.name = 'CVP Attack'
         self.history_length = int(data.data_configuration['history_length'])
         
         return
@@ -113,6 +114,8 @@ class CVP_Attack(Attack):
             {y_input}: the ground-truth crowd-flow state of shape (None, 32, 32, 2)
             {epsilon}: the maximum allowed perturbation to a pixel
         '''
+        
+        self.epsilon = epsilon
         
         history = self.data.data_configuration['history_length']
         self.last_run_loss_values = []

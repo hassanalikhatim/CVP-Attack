@@ -22,7 +22,7 @@ class Adaptive_PGD_Attack(Adaptive_Attack):
             input_mask, output_mask
         )
         
-        self.last_run_loss_values = []
+        self.name = 'Adaptive PGD Attack'
         
         return
     
@@ -35,6 +35,8 @@ class Adaptive_PGD_Attack(Adaptive_Attack):
         targeted=False, 
         **kwargs
     ):
+        
+        self.epsilon = epsilon
         
         self.last_run_loss_values = []
         epsilon_per_iteration = epsilon/(iterations/4)

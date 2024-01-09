@@ -22,6 +22,8 @@ class Adaptive_FGSM_Attack(Adaptive_Attack):
             input_mask, output_mask
         )
         
+        self.name = 'Adaptive FGSM Attack'
+        
         return
     
     
@@ -32,6 +34,8 @@ class Adaptive_FGSM_Attack(Adaptive_Attack):
         targeted=False,
         **kwargs
     ):
+        
+        self.epsilon = epsilon
         
         self.last_run_loss_values = []
         x_perturbation = np.zeros_like(x_input).astype(np.float32)

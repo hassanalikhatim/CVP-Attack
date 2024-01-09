@@ -22,7 +22,7 @@ class PGD_Attack(Attack):
             input_mask, output_mask
         )
         
-        self.last_run_loss_values = []
+        self.name = 'PGD Attack'
         
         return
     
@@ -35,6 +35,8 @@ class PGD_Attack(Attack):
         targeted=False, 
         **kwargs
     ):
+        
+        self.epsilon = epsilon
         
         self.last_run_loss_values = []
         epsilon_per_iteration = epsilon/(iterations/4)

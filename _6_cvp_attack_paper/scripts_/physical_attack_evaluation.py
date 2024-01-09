@@ -5,18 +5,17 @@ from _6_cvp_attack_paper.scripts_.configuration_values import *
 
 from _0_general_ML.data_utils.dataset_cards.taxibj import TaxiBJ
 
-from _1_adversarial_ML.all_attacks import FGSM_Attack, i_FGSM_Attack, PGD_Attack
+from _6_cvp_attack_paper._1_adaptive_attacks.all_adaptive_attacks import Physical_PGD_Attack
 
 from _6_cvp_attack_paper._0_cav_detect.keras_model_with_call import Keras_Model_with_call
-from _6_cvp_attack_paper._2_cvp_attack.cvp_attack import CVP_Attack
+from _6_cvp_attack_paper._0_cav_detect.cav_detect import CaV_Detect
+from _6_cvp_attack_paper._2_cvp_attack.physical_cvp_attack import Physical_CVP_Attack
 
 
 
 all_attacks = {
-    'fgsm': FGSM_Attack,
-    'ifgsm': i_FGSM_Attack,
-    'pgd': PGD_Attack,
-    'cvp': CVP_Attack
+    'pgd': Physical_PGD_Attack,
+    'cvp': Physical_CVP_Attack
 }
 
 
@@ -50,31 +49,39 @@ def main_sub(
         batch_size=batch_size
     )
     
-    for attack_name in attack_names:
-        for epsilon in attack_configurations[attack_name]['perturbation_budgets']:
+    # Cav-detect defense
+    cav_detected_model = CaV_Detect(my_data, my_model)
+    
+    # attack code starts here...
+    for attack_name in ['pgd', 'cvp']:
+        for device_budget in all_attacks[attack_name]['device_budgets']:
             target = np.ones_like( my_data.y_test[-n_targets:] )
             
-            my_attack = all_attacks[attack_name](my_data, my_model)
+            my_attack = all_attacks[attack_name](my_data, cav_detected_model)
             
             adversarial_examples = my_attack.attack(
                 my_data.x_test[-n_targets:], target, 
-                epsilon=epsilon, iterations=iterations,
+                device_budget=device_budget, iterations=iterations,
                 targeted=True
             )
             
-            # evaluating the attack
+            # evaluating the attack and defense
             original_loss = my_model.model.evaluate(
                 my_data.x_test[-n_targets:], my_data.y_test[-n_targets:], verbose=False
             )
             adversarial_loss = my_model.model.evaluate(
                 adversarial_examples, my_data.y_test[-n_targets:], verbose=False
             )
+            _, _, frr = cav_detected_model.detect(my_data.x_test[-n_targets:])
+            _, _, far = cav_detected_model.detect(adversarial_examples)
             
             my_attack.info()
             print(
                 'Model loss before attack: {:7.3f}\n'
-                'Model loss after attack:  {:7.3f}'
-                ''.format(original_loss, adversarial_loss)
+                'Model loss after attack:  {:7.3f}\n'
+                'False Rejection Rate:     {:7.3f}\n'
+                'False Acceptance Rate:    {:7.3f}'
+                ''.format( original_loss, adversarial_loss, np.mean(frr), np.mean(far) )
             )
     
     return
