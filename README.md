@@ -10,7 +10,7 @@ We are still cleaning this code, and hope to complete it soon. Nevertheless, we 
 ## Citation
 If you use this code in your work, please cite using the following BibTeX entry:
 ```
-@ARTICLE{10375906,
+@ARTICLE{ali2023consistent,
   author={Ali, Hassan and Butt, Muhammad Atif and Filali, Fethi and Al-Fuqaha, Ala and Qadir, Junaid},
   journal={IEEE Transactions on Intelligent Transportation Systems}, 
   title={Consistent Valid Physically-Realizable Adversarial Attack Against Crowd-Flow Prediction Models}, 
