@@ -25,12 +25,12 @@ class TaxiBJ(Dataset):
         self.dataset_folder = dataset_folder
         self.test_ratio = test_ratio
         
-        self.preapre_data_configuration(data_configuration)
+        self.prepare_data_configuration(data_configuration)
         
         return
     
     
-    def preapre_data_configuration(self, data_configuration: dict):
+    def prepare_data_configuration(self, data_configuration: dict):
         
         self.data_configuration = {
             'year': 16,

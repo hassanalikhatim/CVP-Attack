@@ -59,7 +59,7 @@ def st_resnet_baseline(
 ):
     
     default_model_configuration = {
-        'hidden_layers': [1],
+        'hidden_layers': 1,
         'weight_decay': None,
         'learning_rate': 1e-4
     }
