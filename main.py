@@ -24,9 +24,9 @@ from _6_cvp_attack_paper.scripts_.physical_attack_evaluation import main as phys
 
 if __name__ == '__main__':
     
-    # train_models()
-    # non_adaptive_attack_evaluation()
-    # cav_detect_evaluation()
-    # adaptive_attack_evaluation()
+    train_models()
+    non_adaptive_attack_evaluation()
+    cav_detect_evaluation()
+    adaptive_attack_evaluation()
     physical_attack_evaluation()
     
